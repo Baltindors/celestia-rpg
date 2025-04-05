@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # baltindors-rpg
 
 ## Project setup
@@ -22,3 +23,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+=======
+# celestia-rpg
+>>>>>>> 86b4047255a80779750f0d0f21f189f6981a1856
