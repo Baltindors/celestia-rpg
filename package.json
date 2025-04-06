@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "mysql2": "^3.14.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.24.0"
+  }
+}

@@ -1,83 +1,85 @@
 // server.js
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
-const mysql = require("mysql2");
-require("dotenv").config();
-require("./passport-setup"); // Import our Passport configuration
+const cors = require("cors");
+const mysql = require("mysql2/promise");
 
+// Initialize Express app and configurations.
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// MySQL connection
-const connection = mysql.createConnection({
+// Enable CORS for your Vue app.
+app.use(
+  cors({
+    origin: "http://localhost:8080",
+    credentials: true,
+  })
+);
+
+// MySQL connection pool.
+const pool = mysql.createPool({
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DB,
-});
-connection.connect((err) => {
-  if (err) {
-    console.error("MySQL connection error:", err);
-  } else {
-    console.log("Connected to MySQL");
-  }
+  database: process.env.MYSQL_DATABASE,
 });
 
-// Express session middleware
+// Session middleware.
 app.use(
   session({
-    secret: "your_secret", // Change this to a strong secret in production
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })
 );
 
-// Initialize Passport and sessions
+// Initialize Passport.
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Google OAuth routes
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    // On success, redirect to the frontend callback route passing user data as a query parameter.
-    res.redirect(
-      "http://localhost:8080/auth/callback?user=" +
-        encodeURIComponent(JSON.stringify(req.user))
-    );
-  }
-);
+// Passport session management.
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
 
-// Facebook OAuth routes
-app.get(
-  "/auth/facebook",
-  passport.authenticate("facebook", { scope: ["email"] })
-);
-app.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/login" }),
-  (req, res) => {
-    res.redirect(
-      "http://localhost:8080/auth/callback?user=" +
-        encodeURIComponent(JSON.stringify(req.user))
-    );
-  }
-);
-
-// API endpoint to get current user data (if needed)
-app.get("/api/user", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json(req.user);
-  } else {
-    res.status(401).json({ message: "Not authenticated" });
+passport.deserializeUser(async (id, done) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
+    if (rows.length > 0) {
+      done(null, rows[0]);
+    } else {
+      done(new Error("User not found"));
+    }
+  } catch (err) {
+    done(err);
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server started on port 3000");
+// Import route modules.
+const googleRoutes = require("./routes/google");
+const facebookRoutes = require("./routes/facebook");
+const userRoutes = require("./routes/user");
+
+// Use routes.
+app.use("/auth/google", googleRoutes);
+app.use("/auth/facebook", facebookRoutes);
+app.use("/api/user", userRoutes);
+
+// Root route.
+app.get("/", (req, res) => {
+  res.send("Backend server is running.");
+});
+
+// Logout route.
+app.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.redirect("/");
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
