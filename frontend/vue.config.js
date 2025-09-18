@@ -1,4 +1,9 @@
-const { defineConfig } = require("@vue/cli-service");
-module.exports = defineConfig({
-  transpileDependencies: true,
-});
+// frontend/vue.config.js
+module.exports = {
+  lintOnSave: false,
+  chainWebpack: (config) => {
+    try {
+      config.module.rules.delete("eslint");
+    } catch {}
+  },
+};

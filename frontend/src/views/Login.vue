@@ -7,13 +7,27 @@
 </template>
 
 <script>
+// Import the new playSound function
+import { playSound } from "../utils/audio";
+
 export default {
   methods: {
     loginWithGoogle() {
-      window.location.href = "http://localhost:3000/auth/google";
+      // Play the sound on click
+      playSound("futuristic-click.wav");
+
+      // Navigate after a short delay to allow the sound to play
+      setTimeout(() => {
+        window.location.href = "http://localhost:3000/auth/google";
+      }, 150); // 150 milliseconds
     },
     loginWithFacebook() {
-      window.location.href = "http://localhost:3000/auth/facebook";
+      // Play the sound on click
+      playSound("futuristic-click.wav");
+
+      setTimeout(() => {
+        window.location.href = "http://localhost:3000/auth/facebook";
+      }, 150);
     },
   },
 };

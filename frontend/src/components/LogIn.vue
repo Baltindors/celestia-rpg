@@ -7,12 +7,27 @@
 </template>
 
 <script setup>
+// Import the new playSound function
+import { playSound } from "../utils/audio";
+
 function loginWithGoogle() {
-  window.location.href = "http://localhost:3000/auth/google";
+  // Play the sound
+  playSound("futuristic-click.wav");
+
+  // Navigate after a delay
+  setTimeout(() => {
+    window.location.href = "http://localhost:3000/auth/google";
+  }, 150);
 }
 
 function loginWithFacebook() {
-  window.location.href = "http://localhost:3000/auth/facebook";
+  // Play the sound
+  playSound("futuristic-click.wav");
+
+  // Navigate after a delay
+  setTimeout(() => {
+    window.location.href = "http://localhost:3000/auth/facebook";
+  }, 150);
 }
 </script>
 

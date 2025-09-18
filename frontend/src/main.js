@@ -1,17 +1,12 @@
-// Example in a setup() function or lifecycle hook
-import { ref, onMounted } from "vue";
-import axios from "axios";
-import { useAuthStore } from "@/store/auth";
+// src/main.js
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import App from "./App.vue";
+import router from "./router"; // Make sure to import and use the router
 
-const authStore = useAuthStore();
+const app = createApp(App);
+const pinia = createPinia();
 
-onMounted(async () => {
-  try {
-    const response = await axios.get("http://localhost:3000/api/user", {
-      withCredentials: true,
-    });
-    authStore.setUser(response.data.user);
-  } catch (error) {
-    console.error("User not authenticated", error);
-  }
-});
+app.use(pinia);
+app.use(router); // Use the router
+app.mount("#app");

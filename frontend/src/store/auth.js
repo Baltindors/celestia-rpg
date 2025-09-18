@@ -1,6 +1,6 @@
 // src/store/auth.js
 import { defineStore } from "pinia";
-import axios from "axios";
+import api from "../services/api"; // Use the correct relative path
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -9,11 +9,10 @@ export const useAuthStore = defineStore("auth", {
   actions: {
     async fetchUser() {
       try {
-        const response = await axios.get("http://localhost:3000/api/user", {
-          withCredentials: true,
-        });
-        this.user = response.data;
+        const response = await api.get("/api/user");
+        this.user = response.data.user;
       } catch (error) {
+        this.user = null; // Clear user data on error
         console.error("Error fetching user:", error);
       }
     },

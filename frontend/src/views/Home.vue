@@ -12,17 +12,22 @@
 </template>
 
 <script>
-import { onMounted } from "vue";
+import { onMounted, computed } from "vue";
 import { useAuthStore } from "../store/auth";
 
 export default {
   setup() {
     const authStore = useAuthStore();
+
     onMounted(() => {
-      authStore.fetchUser();
+      // Only fetch the user if we don't already have one
+      if (!authStore.user) {
+        authStore.fetchUser();
+      }
     });
+
     return {
-      user: authStore.$state.user,
+      user: computed(() => authStore.user),
     };
   },
 };
