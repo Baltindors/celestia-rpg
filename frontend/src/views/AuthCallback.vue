@@ -1,27 +1,28 @@
 <template>
   <div>
-    <p>Authenticating...</p>
+    <p>Finalizing authentication...</p>
   </div>
 </template>
 
 <script>
 import { useAuthStore } from "../store/auth";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
-  async created() {
-    // Extract the "user" query parameter passed from the backend
-    const query = new URLSearchParams(window.location.search);
-    const userString = query.get("user");
+  setup() {
     const authStore = useAuthStore();
-    if (userString) {
-      const user = JSON.parse(decodeURIComponent(userString));
-      authStore.setUser(user);
-      this.$router.push("/");
-    } else {
-      // Alternatively, try to fetch the user from the API if not passed in the URL
+    const router = useRouter();
+
+    onMounted(async () => {
+      // Because the cookie is now set, this fetch will succeed.
       await authStore.fetchUser();
-      this.$router.push("/");
-    }
+
+      // After successfully fetching the user, navigate to the homepage.
+      router.push("/");
+    });
+
+    return {};
   },
 };
 </script>

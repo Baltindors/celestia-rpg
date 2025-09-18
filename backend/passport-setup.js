@@ -1,109 +1,103 @@
 // passport-setup.js
-const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
-const mysql = require("mysql2");
+const LocalStrategy = require("passport-local").Strategy; // 1. Import LocalStrategy
+const mysql = require("mysql2/promise");
+const bcrypt = require("bcryptjs");
+const path = require("path");
 
-// Create a MySQL connection (same credentials as in server.js)
-const connection = mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DB,
-});
-connection.connect();
+module.exports = function (passport) {
+  // Use the robust path for dotenv
+  require("dotenv").config({ path: path.join(__dirname, ".env") });
 
-// Serialize the user into the session
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-// Deserialize user from the session
-passport.deserializeUser((id, done) => {
-  connection.query("SELECT * FROM users WHERE id = ?", [id], (err, results) => {
-    if (err) return done(err);
-    done(null, results[0]);
+  const pool = mysql.createPool({
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+    port: process.env.MYSQL_PORT,
   });
-});
 
-// Google Strategy
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
-    },
-    (accessToken, refreshToken, profile, done) => {
-      const email = profile.emails[0].value;
-      connection.query(
-        "SELECT * FROM users WHERE email = ?",
-        [email],
-        (err, results) => {
-          if (err) return done(err);
-          if (results.length) {
-            // User exists
-            return done(null, results[0]);
-          } else {
-            // Create a new user
-            const newUser = {
-              name: profile.displayName,
-              email: email,
-              provider: "google",
-            };
-            connection.query(
-              "INSERT INTO users SET ?",
-              newUser,
-              (err, result) => {
-                if (err) return done(err);
-                newUser.id = result.insertId;
-                return done(null, newUser);
-              }
-            );
+  // 2. Add the Local Strategy for email/password login
+  passport.use(
+    new LocalStrategy(
+      { usernameField: "email" },
+      async (email, password, done) => {
+        try {
+          const [users] = await pool.query(
+            "SELECT * FROM users WHERE email = ? AND provider = 'local'",
+            [email]
+          );
+          if (users.length === 0) {
+            return done(null, false, {
+              message: "That email is not registered.",
+            });
           }
-        }
-      );
-    }
-  )
-);
 
-// Facebook Strategy
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-      profileFields: ["id", "displayName", "emails"],
-    },
-    (accessToken, refreshToken, profile, done) => {
-      // Note: Facebook may not always return an email address.
-      const email = profile.emails ? profile.emails[0].value : null;
-      connection.query(
-        "SELECT * FROM users WHERE email = ?",
-        [email],
-        (err, results) => {
-          if (err) return done(err);
-          if (results.length) {
-            return done(null, results[0]);
+          const user = users[0];
+          const isMatch = await bcrypt.compare(password, user.password);
+
+          if (isMatch) {
+            return done(null, user);
           } else {
-            const newUser = {
-              name: profile.displayName,
-              email: email,
-              provider: "facebook",
-            };
-            connection.query(
-              "INSERT INTO users SET ?",
-              newUser,
-              (err, result) => {
-                if (err) return done(err);
-                newUser.id = result.insertId;
-                return done(null, newUser);
-              }
-            );
+            return done(null, false, { message: "Password incorrect." });
           }
+        } catch (err) {
+          return done(err);
         }
-      );
+      }
+    )
+  );
+
+  // Google Strategy
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "/auth/google/callback",
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        const newUser = {
+          provider: "google",
+          providerId: profile.id,
+          name: profile.displayName,
+          email: profile.emails[0].value,
+        };
+        try {
+          let [user] = await pool.query(
+            "SELECT * FROM users WHERE providerId = ?",
+            [profile.id]
+          );
+          if (user.length > 0) {
+            done(null, user[0]);
+          } else {
+            await pool.query("INSERT INTO users SET ?", newUser);
+            let [newUserRecord] = await pool.query(
+              "SELECT * FROM users WHERE providerId = ?",
+              [profile.id]
+            );
+            done(null, newUserRecord[0]);
+          }
+        } catch (err) {
+          done(err, null);
+        }
+      }
+    )
+  );
+
+  passport.serializeUser((user, done) => {
+    done(null, user.id);
+  });
+
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const [users] = await pool.query("SELECT * FROM users WHERE id = ?", [
+        id,
+      ]);
+      done(null, users[0]);
+    } catch (err) {
+      done(err);
     }
-  )
-);
+  });
+};

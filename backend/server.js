@@ -6,11 +6,15 @@ const passport = require("passport");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
 
-// Initialize Express app and configurations.
+require("./passport-setup")(passport);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS for your Vue app.
+// 1. ADD MIDDLEWARE TO PARSE JSON AND FORM DATA
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 app.use(
   cors({
     origin: "http://localhost:8080",
@@ -18,15 +22,6 @@ app.use(
   })
 );
 
-// MySQL connection pool.
-const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-});
-
-// Session middleware.
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -35,48 +30,30 @@ app.use(
   })
 );
 
-// Initialize Passport.
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Passport session management.
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
-    if (rows.length > 0) {
-      done(null, rows[0]);
-    } else {
-      done(new Error("User not found"));
-    }
-  } catch (err) {
-    done(err);
-  }
-});
 
 // Import route modules.
 const googleRoutes = require("./routes/google");
 const facebookRoutes = require("./routes/facebook");
 const userRoutes = require("./routes/user");
+const authRoutes = require("./routes/auth"); // 2. Import new auth routes
 
 // Use routes.
+app.use("/auth", authRoutes); // 3. Use new auth routes for /register, /login
 app.use("/auth/google", googleRoutes);
 app.use("/auth/facebook", facebookRoutes);
 app.use("/api/user", userRoutes);
 
-// Root route.
 app.get("/", (req, res) => {
   res.send("Backend server is running.");
 });
 
-// Logout route.
 app.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
-    res.redirect("/");
+    // Redirect to frontend after logout
+    res.redirect("http://localhost:8080/login");
   });
 });
 

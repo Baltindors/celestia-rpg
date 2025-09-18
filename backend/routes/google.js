@@ -15,8 +15,8 @@ router.get(
   "/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    // Successful authentication, redirect to your frontend.
-    res.redirect("http://localhost:8080");
+    // THIS IS THE FIX: Redirect to the frontend's dedicated callback route
+    res.redirect("http://localhost:8080/auth/callback");
   }
 );
 

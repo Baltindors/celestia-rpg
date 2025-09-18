@@ -65,7 +65,6 @@ button {
   padding: 12px 24px;
   cursor: pointer;
   font-size: 16px;
-  margin: 0.75rem;
 
   /* A subtle glow effect */
   box-shadow: inset 0 0 10px rgba(0, 246, 255, 0.5),
