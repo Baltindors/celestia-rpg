@@ -12,7 +12,7 @@ import { playSound } from "../utils/audio";
 
 function loginWithGoogle() {
   // Play the sound
-  playSound("futuristic-click.wav");
+  playSound("futuristic-click.mp3");
 
   // Navigate after a delay
   setTimeout(() => {
@@ -22,7 +22,7 @@ function loginWithGoogle() {
 
 function loginWithFacebook() {
   // Play the sound
-  playSound("futuristic-click.wav");
+  playSound("futuristic-click.mp3");
 
   // Navigate after a delay
   setTimeout(() => {

@@ -59,26 +59,26 @@ const serverMessage = ref("");
 const isError = ref(false);
 
 const toggleForm = () => {
+  // Sound plays when switching forms
+  playSound("futuristic-click.mp3");
   isRegistering.value = !isRegistering.value;
-  serverMessage.value = ""; // Clear messages when toggling
+  serverMessage.value = "";
   isError.value = false;
 };
 
 const handleSubmit = async () => {
-  playSound("futuristic-click.wav");
+  playSound("futuristic-click.mp3");
   serverMessage.value = "";
   isError.value = false;
 
   try {
     if (isRegistering.value) {
-      // Registration logic
       const response = await authStore.register(form.value);
       serverMessage.value = response.data.message;
-      setTimeout(() => toggleForm(), 2000); // Switch to login form after success
+      setTimeout(() => toggleForm(), 2000);
     } else {
-      // Login logic
       await authStore.login(form.value);
-      router.push("/"); // Redirect to home on successful login
+      router.push("/");
     }
   } catch (error) {
     serverMessage.value =
@@ -88,14 +88,14 @@ const handleSubmit = async () => {
 };
 
 const loginWithGoogle = () => {
-  playSound("futuristic-click.wav");
+  playSound("futuristic-click.mp3");
   setTimeout(() => {
     window.location.href = "http://localhost:3000/auth/google";
   }, 150);
 };
 
 const loginWithFacebook = () => {
-  playSound("futuristic-click.wav");
+  playSound("futuristic-click.mp3");
   setTimeout(() => {
     window.location.href = "http://localhost:3000/auth/facebook";
   }, 150);

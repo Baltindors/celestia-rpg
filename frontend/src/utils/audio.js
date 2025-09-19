@@ -1,15 +1,26 @@
 // src/utils/audio.js
 
-// A simple function to play an audio file from the assets folder
-export function playSound(soundFile) {
+const clickSound = new Audio();
+let isPlaying = false;
+
+export async function playSound(soundFile) {
+  if (isPlaying) return;
+
   try {
-    // The 'new URL(path, import.meta.url)' pattern is the modern way
-    // to correctly resolve asset paths in Vite-based projects like Vue 3.
-    const audio = new Audio(
-      new URL(`../assets/sounds/${soundFile}`, import.meta.url).href
-    );
-    audio.play();
+    isPlaying = true;
+
+    // This path correctly points to the file in the 'public' folder.
+    const soundUrl = `/sounds/${soundFile}`;
+
+    if (clickSound.src !== soundUrl) {
+      clickSound.src = soundUrl;
+    }
+
+    await clickSound.play();
   } catch (error) {
-    console.error("Error playing sound:", error);
+    // <-- The missing brace is now added
+    console.error(`Error playing sound: ${soundFile}`, error);
+  } finally {
+    isPlaying = false;
   }
 }
