@@ -1,6 +1,6 @@
 <template>
   <div class="race-selection-container">
-    <h1>Welcome to Elysia</h1>
+    <h1>Welcome to Celestia</h1>
     <p class="intro-text">
       Your journey begins now. Choose your race to shape your destiny.
     </p>

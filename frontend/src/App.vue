@@ -1,23 +1,29 @@
+// src/App.vue
 <template>
   <div id="app-container">
     <div class="content-wrapper">
       <router-view />
     </div>
+    <VideoSplashScreen />
   </div>
 </template>
 
 <script>
-// No script logic is needed for layout anymore, so this is empty.
+// Make sure to import the new component
+import VideoSplashScreen from "./components/VideoSplashScreen.vue";
+
 export default {
+  components: {
+    VideoSplashScreen,
+  },
   setup() {
-    // All header-related logic has been removed.
     return {};
   },
 };
 </script>
 
 <style>
-/* --- MODIFIED GLOBAL STYLES --- */
+/* Your existing styles remain unchanged */
 body {
   background-image: url("https://images.pexels.com/photos/176851/pexels-photo-176851.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2");
   background-size: cover;
@@ -27,7 +33,6 @@ body {
   margin: 0;
   padding: 0;
   color: #e0e0e0;
-  /* Re-added flex properties to center the content vertically and horizontally */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,15 +43,13 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 2rem; /* Add some padding for smaller screens */
+  padding: 2rem;
 }
 
-/* --- MODIFIED CONTENT WRAPPER --- */
 .content-wrapper {
   width: 100%;
   padding: 2.5rem;
   max-width: 1000px;
-  /* Removed top/bottom margin, as the body now handles centering */
   margin: 0 auto;
   background-color: rgba(10, 10, 20, 0.75);
   backdrop-filter: blur(10px);
@@ -57,7 +60,6 @@ body {
   text-align: center;
 }
 
-/* Other global styles like h1, button, etc. remain the same */
 h1,
 h2 {
   font-family: "Orbitron", sans-serif;

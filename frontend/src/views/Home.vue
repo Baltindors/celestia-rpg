@@ -1,3 +1,4 @@
+// src/views/Home.vue
 <template>
   <div>
     <div v-if="user && user.race">
@@ -22,10 +23,12 @@
 import { onMounted, computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../store/auth";
+import { useUiStore } from "../store/ui"; // <-- 1. Import the new UI store
 
 export default {
   setup() {
     const authStore = useAuthStore();
+    const uiStore = useUiStore(); // <-- 2. Initialize the UI store
     const router = useRouter();
     const isLoading = ref(true);
 
@@ -33,24 +36,26 @@ export default {
 
     const checkUserRace = (currentUser) => {
       if (currentUser) {
-        // If user is logged in but has NOT selected a race, redirect
         if (!currentUser.race) {
           router.push("/race-selection");
         }
       }
-      // If we have a user (with a race) or no user at all, stop loading
       isLoading.value = false;
     };
 
     onMounted(async () => {
-      // If we don't have user data, fetch it
       if (!authStore.user) {
         await authStore.fetchUser();
       }
+
+      // <-- 3. Trigger the splash screen
+      if (authStore.user) {
+        uiStore.showSplashScreen();
+      }
+
       checkUserRace(authStore.user);
     });
 
-    // Watch for changes in the user object (e.g., after login)
     watch(user, (newUser) => {
       checkUserRace(newUser);
     });
