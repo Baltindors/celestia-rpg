@@ -5,53 +5,66 @@
       Your journey begins now. Choose your race to shape your destiny.
     </p>
 
-    <div v-if="races.length === 0">
-      <p>Loading races...</p>
-    </div>
-
-    <div v-else class="races-grid">
-      <div
-        v-for="race in races"
-        :key="race.race_name"
-        class="race-card"
-        :class="{
-          selected: selectedRace && selectedRace.race_name === race.race_name,
-        }"
-        @click="selectRaceCard(race)"
-      >
-        <h2>{{ race.race_name }}</h2>
-        <p>{{ race.kingdom }}</p>
+    <div class="race-selection-layout">
+      <div v-if="races.length === 0">
+        <p>Loading races...</p>
       </div>
-    </div>
+      <div v-else class="races-grid">
+        <Card
+          v-for="race in races"
+          :key="race.race_name"
+          :title="race.race_name"
+          :description="race.kingdom"
+          :image="getRaceImage(race.race_name)"
+          :class="{
+            selected: selectedRace && selectedRace.race_name === race.race_name,
+          }"
+          @card-click="selectRaceCard(race)"
+        />
+      </div>
 
-    <div v-if="selectedRace" class="race-details">
-      <h3>{{ selectedRace.race_name }}</h3>
-      <p class="description">{{ selectedRace.description }}</p>
-      <h4>Bonuses:</h4>
-      <ul>
-        <li v-for="(bonus, key) in selectedRace.bonus" :key="key">
-          <strong>{{ key.charAt(0).toUpperCase() + key.slice(1) }}:</strong>
-          {{ bonus }}
-        </li>
-      </ul>
-      <h4>Starting Units:</h4>
-      <p>{{ selectedRace.starting_units.join(", ") }}</p>
-      <button @click="confirmSelection" :disabled="isConfirming">
-        {{
-          isConfirming
-            ? "Confirming..."
-            : "Choose the " + selectedRace.race_name
-        }}
-      </button>
+      <div v-if="selectedRace" class="race-details">
+        <h3>{{ selectedRace.race_name }}</h3>
+        <p class="description">{{ selectedRace.description }}</p>
+        <h4>Bonuses:</h4>
+        <ul>
+          <li v-for="(bonus, key) in selectedRace.bonus" :key="key">
+            <strong>{{ key.charAt(0).toUpperCase() + key.slice(1) }}:</strong>
+            {{ bonus }}
+          </li>
+        </ul>
+        <h4>Starting Units:</h4>
+        <p>{{ selectedRace.starting_units.join(", ") }}</p>
+        <button @click="confirmSelection" :disabled="isConfirming">
+          {{
+            isConfirming
+              ? "Confirming..."
+              : "Choose the " + selectedRace.race_name
+          }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, computed, ref } from "vue";
+import { onMounted, computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../store/auth";
+import { playSound } from "../utils/audio";
+import Card from "../components/Card.vue";
 
+function getRaceImages() {
+  const context = require.context("../assets/images/races", false, /\.jpg$/);
+  const images = {};
+  context.keys().forEach((key) => {
+    const raceName = key.replace("./", "").replace(".jpg", "");
+    images[raceName] = context(key);
+  });
+  return images;
+}
+
+const raceImages = getRaceImages();
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -61,21 +74,39 @@ const isConfirming = ref(false);
 
 onMounted(() => {
   authStore.fetchRaces();
+  // Set the first race as selected by default for a better UX
+  // Wait for races to load
+  if (races.value.length > 0) {
+    selectedRace.value = races.value[0];
+  } else {
+    // If races are loaded later, watch for it
+    const unwatch = watch(races, (newRaces) => {
+      if (newRaces.length > 0) {
+        selectedRace.value = newRaces[0];
+        unwatch(); // Stop watching once the first race is set
+      }
+    });
+  }
 });
 
+const getRaceImage = (raceName) => {
+  return raceImages[raceName] || "";
+};
+
 const selectRaceCard = (race) => {
+  playSound("futuristic-click.mp3");
   selectedRace.value = race;
 };
 
 const confirmSelection = async () => {
   if (!selectedRace.value) return;
+  playSound("futuristic-click.mp3");
   isConfirming.value = true;
   try {
     await authStore.selectRace(selectedRace.value.race_name);
-    router.push("/"); // Redirect to home/game dashboard on success
+    router.push("/");
   } catch (error) {
     console.error("Failed to confirm race selection:", error);
-    // Optionally, show an error message to the user
   } finally {
     isConfirming.value = false;
   }
@@ -88,46 +119,79 @@ const confirmSelection = async () => {
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+  padding-bottom: 2rem; /* Ensure some padding at the bottom for scrolling */
 }
 .intro-text {
   max-width: 600px;
   color: #c0c0c0;
+  text-align: center;
 }
+
+/* NEW: Layout for desktop (side-by-side) and mobile (stacked) */
+.race-selection-layout {
+  display: flex;
+  flex-direction: column; /* Default to stacked on small screens */
+  gap: 2rem; /* Space between grid and details */
+  width: 100%;
+  max-width: 1200px; /* Max width for the entire layout */
+}
+
+@media (min-width: 900px) {
+  /* Apply side-by-side layout for larger screens */
+  .race-selection-layout {
+    flex-direction: row; /* Side-by-side */
+    justify-content: center;
+    align-items: flex-start; /* Align items to the top */
+  }
+}
+
 .races-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
   width: 100%;
-  max-width: 900px;
+  flex: 1; /* Allow grid to take available space */
 }
-.race-card {
-  border: 2px solid #00f6ff;
-  border-radius: 8px;
-  padding: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background-color: rgba(10, 25, 47, 0.7);
+@media (min-width: 900px) {
+  .races-grid {
+    grid-template-columns: repeat(
+      2,
+      minmax(200px, 1fr)
+    ); /* Two columns on desktop */
+    max-width: 500px; /* Limit width of grid to avoid stretching */
+  }
 }
-.race-card:hover {
-  background-color: rgba(0, 246, 255, 0.2);
-  transform: translateY(-5px);
-}
-.race-card.selected {
+
+/* Styling for the selected card state - kept the same for now */
+.races-grid .selected {
   background-color: rgba(0, 246, 255, 0.3);
   box-shadow: 0 0 15px rgba(0, 246, 255, 0.7);
   transform: translateY(-5px);
 }
+
 .race-details {
-  margin-top: 1.5rem;
+  margin-top: 0; /* Reset margin from previous stacked layout */
   padding: 1.5rem;
   border: 1px solid #00f6ff;
   border-radius: 8px;
   width: 100%;
-  max-width: 700px;
   background-color: rgba(0, 0, 0, 0.5);
+  flex: 2; /* Allow details to take more space on desktop */
+  max-width: 700px; /* Max width for details pane */
 }
+@media (min-width: 900px) {
+  .race-details {
+    max-width: 600px; /* Adjust max width for details next to cards */
+    min-height: 500px; /* Ensure detail box has some height on desktop */
+    display: flex; /* Use flex to vertically align content inside details */
+    flex-direction: column;
+    justify-content: space-between; /* Push button to bottom if content is short */
+  }
+}
+
 .race-details h3 {
   color: #ff00ff;
+  margin-top: 0;
 }
 .race-details ul {
   list-style: none;
@@ -136,5 +200,9 @@ const confirmSelection = async () => {
 }
 .race-details li {
   margin-bottom: 0.5rem;
+}
+
+.race-details button {
+  margin-top: 1.5rem; /* Space above the button */
 }
 </style>

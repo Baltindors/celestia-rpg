@@ -1,89 +1,93 @@
 <template>
   <div id="app-container">
-    <router-view />
+    <div class="content-wrapper">
+      <router-view />
+    </div>
   </div>
 </template>
 
-<style>
-/* Import a futuristic font from Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@400;700&display=swap");
+<script>
+// No script logic is needed for layout anymore, so this is empty.
+export default {
+  setup() {
+    // All header-related logic has been removed.
+    return {};
+  },
+};
+</script>
 
-/* Global Styles */
+<style>
+/* --- MODIFIED GLOBAL STYLES --- */
 body {
-  /* A dark, futuristic fantasy background image from a free source */
   background-image: url("https://images.pexels.com/photos/176851/pexels-photo-176851.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2");
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* Keeps the background static while scrolling */
-
-  /* Set the primary fonts for the application */
+  background-attachment: fixed;
   font-family: "Exo 2", sans-serif;
-
   margin: 0;
   padding: 0;
+  color: #e0e0e0;
+  /* Re-added flex properties to center the content vertically and horizontally */
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
-  color: #e0e0e0; /* A light grey for better readability on a dark background */
+  justify-content: center;
+  min-height: 100vh;
 }
 
 #app-container {
   width: 100%;
-  max-width: 550px;
-  padding: 2.5rem;
-  text-align: center;
-
-  /* Crystalline / Glassmorphism Effect */
-  background-color: rgba(10, 10, 20, 0.75); /* Semi-transparent dark blue */
-  backdrop-filter: blur(10px); /* This creates the frosted glass effect */
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
-
-  /* Futuristic Border */
-  border: 1px solid rgba(0, 246, 255, 0.5); /* Glowing cyan border */
-  border-radius: 10px;
-  box-shadow: 0 0 25px rgba(0, 246, 255, 0.3); /* Outer glow */
+  display: flex;
+  justify-content: center;
+  padding: 2rem; /* Add some padding for smaller screens */
 }
 
-/* Headings Styling */
+/* --- MODIFIED CONTENT WRAPPER --- */
+.content-wrapper {
+  width: 100%;
+  padding: 2.5rem;
+  max-width: 1000px;
+  /* Removed top/bottom margin, as the body now handles centering */
+  margin: 0 auto;
+  background-color: rgba(10, 10, 20, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 246, 255, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 0 25px rgba(0, 246, 255, 0.3);
+  text-align: center;
+}
+
+/* Other global styles like h1, button, etc. remain the same */
 h1,
 h2 {
-  font-family: "Orbitron", sans-serif; /* Use the special sci-fi font */
+  font-family: "Orbitron", sans-serif;
   color: #ffffff;
-  /* Glowing text effect */
   text-shadow: 0 0 5px #ffffff, 0 0 15px #00f6ff, 0 0 25px #00f6ff;
 }
 
-/* Button Styling */
 button {
   font-family: "Orbitron", sans-serif;
   background: transparent;
-  color: #00f6ff; /* Bright cyan color */
+  color: #00f6ff;
   border: 2px solid #00f6ff;
   border-radius: 5px;
-
   padding: 12px 24px;
   cursor: pointer;
   font-size: 16px;
-
-  /* A subtle glow effect */
   box-shadow: inset 0 0 10px rgba(0, 246, 255, 0.5),
     0 0 15px rgba(0, 246, 255, 0.3);
-
   transition: all 0.3s ease-in-out;
 }
 
 button:hover {
   background-color: rgba(0, 246, 255, 0.2);
   color: #ffffff;
-  /* Intensify the glow on hover */
   box-shadow: inset 0 0 15px rgba(0, 246, 255, 0.8),
     0 0 25px rgba(0, 246, 255, 0.7);
 }
 
-/* Link Styling */
 a {
-  color: #ff00ff; /* A contrasting magenta for links */
+  color: #ff00ff;
   text-decoration: none;
   font-weight: bold;
   text-shadow: 0 0 10px #ff00ff;
