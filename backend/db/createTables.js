@@ -1,11 +1,6 @@
 // db/createTables.js
-
-// 1. ADD THIS LINE AT THE TOP
 const path = require("path");
-
-// 2. CHANGE THE DOTENV LINE TO THIS (it's more reliable)
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
-
 const mysql = require("mysql2/promise");
 
 async function createTables() {
@@ -18,20 +13,58 @@ async function createTables() {
       database: process.env.MYSQL_DATABASE,
     });
 
-    const createUsersTable = `
-      CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        provider VARCHAR(50) NOT NULL,
-        providerId VARCHAR(255) NOT NULL,
-        name VARCHAR(255),
-        email VARCHAR(255) UNIQUE,
-        password VARCHAR(255),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
+    // 1. UPDATE the users table
+    const alterUsersTable = `
+      ALTER TABLE users
+      ADD COLUMN race VARCHAR(50) NULL DEFAULT NULL AFTER email;
     `;
 
-    await pool.query(createUsersTable);
-    console.log("Tables created successfully.");
+    // We wrap this in a separate try/catch because it will error if the column already exists, which is fine.
+    try {
+      await pool.query(alterUsersTable);
+      console.log("Users table altered successfully.");
+    } catch (error) {
+      if (error.code === 'ER_DUP_FIELDNAME') {
+        console.log("Column 'race' already exists in 'users' table.");
+      } else {
+        throw error;
+      }
+    }
+
+    // 2. CREATE the new races table
+    const createRacesTable = `
+      CREATE TABLE IF NOT EXISTS races (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        race_name VARCHAR(255) NOT NULL UNIQUE,
+        kingdom VARCHAR(255),
+        description TEXT,
+        bonus JSON,
+        starting_units JSON,
+        divine_patron VARCHAR(255)
+      )
+    `;
+    await pool.query(createRacesTable);
+    console.log("Table 'races' created successfully.");
+
+    // 3. CREATE a player_stats table for later
+     const createPlayerStatsTable = `
+      CREATE TABLE IF NOT EXISTS player_stats (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        health INT DEFAULT 100,
+        mana INT DEFAULT 50,
+        stamina INT DEFAULT 80,
+        gold INT DEFAULT 100,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )
+    `;
+    await pool.query(createPlayerStatsTable);
+    console.log("Table 'player_stats' created successfully.");
+
+
+    console.log("All tables are ready.");
     await pool.end();
   } catch (error) {
     console.error("Error creating tables:", error);
