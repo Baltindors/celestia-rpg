@@ -23,7 +23,7 @@ const racesData = [
     description:
       "Ambitious and passionate sun-born people empowered by Helios, god of the sun. They are builders of radiant cities and fervent warriors of light.",
     bonus: {
-      military: "+15% combat strength during daytime",
+      military: "+5% combat strength during daytime",
       culture: "+10 to Religious Unity",
       economy: "+10% production from solar energy structures",
     },
@@ -36,8 +36,8 @@ const racesData = [
     description:
       "Stalwart mountainfolk known for their master craftsmanship and indomitable fortresses. Guided by Aegis, god of protection.",
     bonus: {
-      defense: "+25% wall durability",
-      production: "+10% forging speed for armor and weapons",
+      defense: "+10% wall durability",
+      production: "+5% forging speed for armor and weapons",
       loyalty: "+10 to Civic Order",
     },
     starting_units: ["Shieldbearers", "Stoneforge Engineers"],
@@ -49,8 +49,8 @@ const racesData = [
     description:
       "Seafaring merchants and pirates blessed by Elysia, goddess of the sea and dreams. Their charm and cunning rule the waves.",
     bonus: {
-      naval: "+20% ship speed and cargo capacity",
-      diplomacy: "+15 to Trade and Influence",
+      naval: "+10% ship speed and cargo capacity",
+      diplomacy: "+10 to Trade and Influence",
       espionage: "+10 to Concealment and Counter-intelligence",
     },
     starting_units: ["Sea Blades", "Charmcasters"],
@@ -62,8 +62,8 @@ const racesData = [
     description:
       "Nomadic windrunners of the open plains, swift and agile, guided by Zephyrus, god of messengers and travelers.",
     bonus: {
-      mobility: "+20% movement speed for all units",
-      scouting: "+30% visibility range",
+      mobility: "+5% movement speed for all units",
+      scouting: "+10% visibility range",
       logistics: "+10% faster construction of outposts",
     },
     starting_units: ["Skyrunners", "Windshapers"],

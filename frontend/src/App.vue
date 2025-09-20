@@ -1,29 +1,23 @@
 // src/App.vue
 <template>
   <div id="app-container">
-    <div class="content-wrapper">
-      <router-view />
-    </div>
+    <router-view />
     <VideoSplashScreen />
   </div>
 </template>
 
 <script>
-// Make sure to import the new component
 import VideoSplashScreen from "./components/VideoSplashScreen.vue";
 
 export default {
   components: {
     VideoSplashScreen,
   },
-  setup() {
-    return {};
-  },
 };
 </script>
 
 <style>
-/* Your existing styles remain unchanged */
+/* Global styles reset and base settings */
 body {
   background-image: url("https://images.pexels.com/photos/176851/pexels-photo-176851.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2");
   background-size: cover;
@@ -33,33 +27,16 @@ body {
   margin: 0;
   padding: 0;
   color: #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  background-color: #0a0a14;
 }
 
 #app-container {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
+  min-height: 100vh;
+  /* The flex properties that caused the issue have been removed */
 }
 
-.content-wrapper {
-  width: 100%;
-  padding: 2.5rem;
-  max-width: 1000px;
-  margin: 0 auto;
-  background-color: rgba(10, 10, 20, 0.75);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 246, 255, 0.5);
-  border-radius: 10px;
-  box-shadow: 0 0 25px rgba(0, 246, 255, 0.3);
-  text-align: center;
-}
-
+/* Global styles for elements */
 h1,
 h2 {
   font-family: "Orbitron", sans-serif;

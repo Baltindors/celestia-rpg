@@ -114,6 +114,20 @@ const confirmSelection = async () => {
 </script>
 
 <style scoped>
+.content-wrapper {
+  width: 100%;
+  padding: 2.5rem;
+  max-width: 500px; /* Login form can be narrower */
+  margin: 120px auto 2rem auto; /* Margin to clear the fixed header */
+  background-color: rgba(10, 10, 20, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 246, 255, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 0 25px rgba(0, 246, 255, 0.3);
+  text-align: center;
+}
+
 .race-selection-container {
   display: flex;
   flex-direction: column;
