@@ -11,10 +11,14 @@
           />
         </div>
         <div class="hero-content">
-          <h1>Forge Your Destiny in Celestia</h1>
+          <h1>Forge Your Fate in the Realms of Celestia</h1>
           <p>
-            An immersive RPG experience where your choices shape the galaxy.
+            Embark upon a celestial journey where the will of the gods, the rise
+            of empires, and the fire of ambition shape the fate of Elysia. In
+            this grand strategy RPG, your choices echo through divine halls and
+            mortal realms alike.
           </p>
+
           <div class="hero-cta" v-if="!user">
             <router-link to="/login" class="cta-button"
               >Begin Your Journey</router-link
@@ -36,19 +40,24 @@
           <div class="text-content">
             <h2>The World of Celestia</h2>
             <p>
-              In an age of cosmic wonders and ancient mysteries, the galaxy of
-              Celestia is a tapestry of warring factions, forgotten
-              technologies, and rising empires. From the ethereal forests of the
-              Eldorians to the sun-scorched plains of the Zephyrians, five great
-              races vie for dominance, each with their own unique history,
-              strengths, and ambitions.
+              In the divine realm of Elysia, where gods walk the skies and
+              mortals carve their destiny beneath their gaze, the balance of
+              power lies in your hands. As the ruler of a rising city-state, you
+              must harness the favor of the gods, rally your chosen people, and
+              master the arcane arts of strategy, war, and diplomacy.
             </p>
             <p>
-              This is a persistent browser-based game of strategy, diplomacy,
-              and conquest. You will choose your race, build your empire from a
-              single planet, research powerful technologies, assemble vast
-              fleets, and forge alliances or wage war to claim your place among
-              the stars. Your legacy is yet to be written.
+              Every building, hero, relic, and divine power is represented as a
+              collectible, tradable card, imbued with the essence of the
+              Celestial Pantheon. Gather and upgrade your deck to evolve your
+              city, empower your armies, and unlock mythical abilities drawn
+              from the legacies of Aegis, Elysia, Helios, and others.
+            </p>
+            <p>
+              Celestia-RPG is a persistent, browser-based strategy RPG where
+              every decision shapes your destiny. Will you build a shining
+              utopia under Solara’s light, or become a conqueror guided by the
+              whispers of the fallen? The stars await your ascent.
             </p>
           </div>
           <div class="image-content">
