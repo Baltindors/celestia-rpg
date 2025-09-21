@@ -11,6 +11,11 @@
           />
         </div>
         <div class="hero-content">
+          <img
+            src="@/assets/images/Celestia_header.png"
+            alt="Celestia Logo"
+            class="hero-logo"
+          />
           <h1>Forge Your Fate in the Realms of Celestia</h1>
           <p>
             Embark upon a celestial journey where the will of the gods, the rise
@@ -21,10 +26,10 @@
 
           <div class="hero-cta" v-if="!user">
             <router-link to="/login" class="cta-button"
-              >Begin Your Journey</router-link
+              >Return to the Realm</router-link
             >
             <router-link to="/login" class="cta-button secondary"
-              >Create Account</router-link
+              >Begin Your Ascension</router-link
             >
           </div>
           <div class="hero-cta" v-else>
@@ -192,6 +197,19 @@ main {
   object-fit: cover;
 }
 
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-logo {
+  max-width: 600px;
+  margin-bottom: 1rem;
+  border-radius: 15px; /* Rounded corners for the logo */
+  box-shadow: 0 0 25px rgba(0, 246, 255, 0.5); /* Glowing effect */
+}
+
 .hero-content h1 {
   font-size: 3.5rem;
   margin-bottom: 1rem;
@@ -206,6 +224,7 @@ main {
 
 .hero-cta {
   display: flex;
+  flex-direction: column; /* Stack buttons vertically */
   gap: 1rem;
   justify-content: center;
 }

@@ -14,7 +14,7 @@
         <a href="/#community">Community</a>
       </nav>
       <div class="auth-actions">
-        <div v-if="user">
+        <div v-if="user" class="user-actions">
           <span>Welcome, {{ user.name }}</span>
           <router-link to="/dashboard" class="header-button"
             >Enter Game</router-link
@@ -23,7 +23,7 @@
             Logout
           </button>
         </div>
-        <div v-else>
+        <div v-else class="guest-actions">
           <router-link to="/login" class="header-button">Login</router-link>
           <router-link to="/login" class="header-button secondary"
             >Sign Up</router-link
@@ -96,6 +96,14 @@ const handleLogout = async () => {
 }
 
 .auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Added styles for better spacing */
+.user-actions,
+.guest-actions {
   display: flex;
   align-items: center;
   gap: 1rem;
