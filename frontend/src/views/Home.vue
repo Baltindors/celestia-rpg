@@ -25,12 +25,18 @@
           </p>
 
           <div class="hero-cta" v-if="!user">
-            <router-link to="/login" class="cta-button"
-              >Return to the Realm</router-link
-            >
-            <router-link to="/login" class="cta-button secondary"
-              >Begin Your Ascension</router-link
-            >
+            <router-link to="/login" class="cta-image-link">
+              <img
+                src="@/assets/images/home/Begin_Your_Ascension_btn.png"
+                alt="Return to the Realm"
+              />
+            </router-link>
+            <router-link to="/login" class="cta-image-link">
+              <img
+                src="@/assets/images/home/Return_to_the_Realm_btn.png"
+                alt="Begin Your Ascension"
+              />
+            </router-link>
           </div>
           <div class="hero-cta" v-else>
             <router-link to="/dashboard" class="cta-button"
@@ -156,6 +162,27 @@ main {
   /* REMOVED background-color from main element */
 }
 
+.hero-cta {
+  display: flex;
+  flex-direction: row; /* Aligns the images horizontally */
+  justify-content: center; /* Centers the images horizontally in the container */
+  align-items: center; /* Aligns the images vertically */
+  gap: 3.5rem; /* Adds space between the images */
+  margin-top: 1rem;
+}
+
+.cta-image-link img {
+  width: 100%;
+  max-width: 200px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 100px;
+}
+
+.cta-image-link:hover img {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 246, 255, 0.7);
+}
+
 /* Hero Section */
 .hero-section {
   position: relative;
@@ -218,15 +245,8 @@ main {
 .hero-content p {
   font-size: 1.25rem;
   max-width: 600px;
-  margin: 0 auto 2rem auto;
+  margin: 0 auto 0 auto;
   color: #c0c0c0;
-}
-
-.hero-cta {
-  display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  gap: 1rem;
-  justify-content: center;
 }
 
 .cta-button {
