@@ -106,14 +106,14 @@ const handleSubmit = async () => {
 const loginWithGoogle = () => {
   playSound("futuristic-click.mp3");
   setTimeout(() => {
-    window.location.href = "http://localhost:3000/auth/google";
+    window.location.href = `${process.env.VUE_API_URL}"/auth/google`;
   }, 150);
 };
 
 const loginWithFacebook = () => {
   playSound("futuristic-click.mp3");
   setTimeout(() => {
-    window.location.href = "http://localhost:3000/auth/facebook";
+    window.location.href = `${process.env.VUE_API_URL}/auth/facebook`;
   }, 150);
 };
 </script>
