@@ -25,14 +25,13 @@
           </p>
 
           <div class="hero-cta" v-if="!user">
-            <!-- Swapped order for mobile-first stacking -->
-            <router-link to="/login" class="cta-image-link begin-ascension">
+            <router-link to="/login?action=register" class="cta-image-link">
               <img
                 src="@/assets/images/home/Begin_Your_Ascension_btn.png"
                 alt="Begin Your Ascension"
               />
             </router-link>
-            <router-link to="/login" class="cta-image-link return-realm">
+            <router-link to="/login" class="cta-image-link">
               <img
                 src="@/assets/images/home/Return_to_the_Realm_btn.png"
                 alt="Return to the Realm"
@@ -153,16 +152,61 @@ const user = computed(() => authStore.user);
 </script>
 
 <style scoped>
-/* --- HERO SECTION --- */
+.home-page {
+  width: 100%;
+}
+
+main {
+  /* Removed padding-top as hero section now manages its own spacing */
+}
+
+.hero-cta {
+  display: flex;
+  flex-direction: column; /* Stack buttons on mobile */
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* On larger screens, make them horizontal again */
+@media (min-width: 768px) {
+  .hero-cta {
+    flex-direction: row;
+    gap: 3.5rem;
+  }
+}
+
+.cta-image-link img {
+  width: 100%;
+  max-width: 180px; /* Slightly smaller on mobile */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 100px;
+}
+
+@media (min-width: 768px) {
+  .cta-image-link img {
+    max-width: 200px;
+  }
+}
+
+.cta-image-link:hover img {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 246, 255, 0.7);
+}
+
+/* Hero Section */
 .hero-section {
   position: relative;
-  height: 90vh;
+  min-height: 100vh; /* Use min-height to ensure it's at least screen height */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   color: white;
   overflow: hidden;
+  padding: 100px 1rem 2rem 1rem; /* Added padding for content */
+  box-sizing: border-box;
 }
 
 .hero-background {
@@ -201,54 +245,68 @@ const user = computed(() => authStore.user);
 }
 
 .hero-logo {
-  max-width: 600px;
+  max-width: 90%; /* Use percentage for mobile */
   margin-bottom: 1rem;
   border-radius: 15px;
   box-shadow: 0 0 25px rgba(0, 246, 255, 0.5);
 }
 
+@media (min-width: 768px) {
+  .hero-logo {
+    max-width: 600px;
+  }
+}
+
 .hero-content h1 {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
 }
 
+@media (min-width: 768px) {
+  .hero-content h1 {
+    font-size: 3.5rem;
+  }
+}
+
 .hero-content p {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   max-width: 600px;
   margin: 0 auto 0 auto;
   color: #c0c0c0;
 }
 
-.hero-cta {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 3.5rem;
-  margin-top: 2rem; /* Increased margin for better spacing */
+.cta-button {
+  font-family: "Orbitron", sans-serif;
+  background: transparent;
+  color: #00f6ff;
+  border: 2px solid #00f6ff;
+  border-radius: 5px;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: none;
+  box-shadow: inset 0 0 10px rgba(0, 246, 255, 0.5),
+    0 0 15px rgba(0, 246, 255, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+.cta-button:hover {
+  background-color: rgba(0, 246, 255, 0.2);
+  color: #ffffff;
+  box-shadow: inset 0 0 15px rgba(0, 246, 255, 0.8),
+    0 0 25px rgba(0, 246, 255, 0.7);
+}
+.cta-button.secondary {
+  background-color: rgba(0, 246, 255, 0.1);
+}
+.cta-button:disabled {
+  border-color: #555;
+  color: #555;
+  cursor: not-allowed;
+  box-shadow: none;
+  background: transparent;
 }
 
-.cta-image-link img {
-  width: 100%;
-  max-width: 200px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 50%; /* Make the border circular */
-}
-
-.cta-image-link:hover img {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(0, 246, 255, 0.7);
-}
-
-/* --- GENERAL CONTENT SECTIONS --- */
-.home-page {
-  width: 100%;
-}
-
-main {
-  padding-top: 70px;
-}
-
+/* General Content Section Styling */
 .content-section {
   padding: 4rem 2rem;
   position: relative;
@@ -288,9 +346,15 @@ main {
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr; /* Default to single column for mobile */
   gap: 3rem;
   align-items: center;
+}
+
+@media (min-width: 768px) {
+  .section-container {
+    grid-template-columns: 1fr 1fr; /* Two columns for desktop */
+  }
 }
 
 .section-container h2 {
@@ -328,15 +392,21 @@ main {
   background-image: url("@/assets/images/home/about-celestia.jpg");
 }
 
-/* --- EXPLORE SECTION --- */
+/* Explore Section */
 .explore-container h2 {
   text-align: center;
 }
 .explore-grid {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr; /* Single column on mobile */
   gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .explore-grid {
+    grid-template-columns: 1fr 1fr; /* Two columns on desktop */
+  }
 }
 
 .explore-card {
@@ -366,15 +436,19 @@ main {
   background-image: url("@/assets/images/home/book-cover.jpg");
 }
 
-/* --- YOUTUBE THUMBNAIL FIX --- */
+/* --- YOUTUBE IMAGE CHANGE --- */
 #youtube-image {
   background-image: url("@/assets/images/home/youtube-thumbnail.jpg");
-  /* Changed from 'contain' to 'cover'. This will fill the space and crop the sides,
-     which looks much cleaner than having black bars. The best long-term fix
-     would be a separate, portrait-oriented image for mobile. */
   background-size: cover;
-  background-position: center;
 }
+
+/* On mobile, swap to the mobile-specific image */
+@media (max-width: 768px) {
+  #youtube-image {
+    background-image: url("@/assets/images/home/youtube-thumbnail_mobile.png");
+  }
+}
+/* --- END OF YOUTUBE IMAGE CHANGE --- */
 
 .explore-card-content {
   padding: 1.5rem;
@@ -388,7 +462,7 @@ main {
   color: #c0c0c0;
 }
 
-/* --- COMMUNITY SECTION --- */
+/* Community Section */
 .community-container {
   display: flex;
   flex-direction: column;
@@ -401,74 +475,5 @@ main {
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
-}
-
-.cta-button {
-  font-family: "Orbitron", sans-serif;
-  background: transparent;
-  color: #00f6ff;
-  border: 2px solid #00f6ff;
-  border-radius: 5px;
-  padding: 12px 24px;
-  cursor: pointer;
-  font-size: 16px;
-  text-decoration: none;
-  box-shadow: inset 0 0 10px rgba(0, 246, 255, 0.5),
-    0 0 15px rgba(0, 246, 255, 0.3);
-  transition: all 0.3s ease-in-out;
-}
-.cta-button:hover {
-  background-color: rgba(0, 246, 255, 0.2);
-  color: #ffffff;
-  box-shadow: inset 0 0 15px rgba(0, 246, 255, 0.8),
-    0 0 25px rgba(0, 246, 255, 0.7);
-}
-
-/* --- MOBILE RESPONSIVENESS --- */
-@media (max-width: 768px) {
-  main {
-    padding-top: 60px;
-  }
-
-  /* FIX: Adjust hero section for better mobile spacing */
-  .hero-section {
-    height: auto; /* Let the section size to its content */
-    min-height: 90vh; /* Ensure it still feels fullscreen */
-    padding: 6rem 0 4rem 0; /* Add generous vertical padding */
-    box-sizing: border-box; /* Ensure padding is included in height calculation */
-  }
-
-  .hero-content {
-    padding: 0 0.2rem; /* Add some padding to hero content */
-  }
-
-  .hero-content h1 {
-    font-size: 2rem;
-  }
-
-  .hero-content p {
-    font-size: 1rem;
-  }
-
-  .hero-logo {
-    max-width: 90%;
-  }
-
-  .hero-cta {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .begin-ascension {
-    order: 1;
-  }
-  .return-realm {
-    order: 2;
-  }
-
-  .section-container,
-  .explore-grid {
-    grid-template-columns: 1fr;
-  }
 }
 </style>
