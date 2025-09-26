@@ -4,17 +4,13 @@ const passport = require("passport");
 const bcrypt = require("bcryptjs");
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
-const mysql = require("mysql2/promise");
+const { Pool } = require("pg"); // Use pg
 
 const router = express.Router();
 
-// MySQL connection pool
-const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-  port: process.env.MYSQL_PORT,
+// PostgreSQL connection pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
 });
 
 // User Registration Route
@@ -26,9 +22,12 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    const [users] = await pool.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
+    // CORRECTED: Use $1 for PostgreSQL parameter
+    const { rows: users } = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+
     if (users.length > 0) {
       return res.status(409).json({ message: "Email already in use." });
     }
@@ -36,15 +35,20 @@ router.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = {
-      provider: "local",
-      providerId: email, // Using email as a unique ID for local auth
+    // CORRECTED: Use standard INSERT INTO ... VALUES syntax for PostgreSQL
+    const insertQuery = `
+      INSERT INTO users (provider, providerId, name, email, password)
+      VALUES ($1, $2, $3, $4, $5)
+    `;
+
+    await pool.query(insertQuery, [
+      "local",
+      email, // Using email as a unique ID for local auth
       name,
       email,
-      password: hashedPassword,
-    };
+      hashedPassword,
+    ]);
 
-    await pool.query("INSERT INTO users SET ?", newUser);
     res.status(201).json({ message: "User registered successfully." });
   } catch (error) {
     console.error("Registration error:", error);
@@ -53,6 +57,7 @@ router.post("/register", async (req, res) => {
 });
 
 // User Login Route - uses the 'local' strategy from passport-setup.js
+// (This part doesn't need changes as passport handles the SQL)
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
@@ -61,7 +66,6 @@ router.post("/login", (req, res, next) => {
     }
     req.logIn(user, (err) => {
       if (err) return next(err);
-      // Send back the authenticated user info
       return res.json({ user });
     });
   })(req, res, next);

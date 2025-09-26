@@ -3,21 +3,18 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
-const mysql = require("mysql2/promise");
+const { Pool } = require("pg"); // Use pg
 
-// MySQL connection pool
-const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-  port: process.env.MYSQL_PORT,
+// PostgreSQL connection pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
 });
 
 // Route to get all available races
 router.get("/races", async (req, res) => {
   try {
-    const [races] = await pool.query("SELECT * FROM races");
+    // CORRECTED: Destructure the 'rows' property from the result object
+    const { rows: races } = await pool.query("SELECT * FROM races");
     res.json(races);
   } catch (error) {
     console.error("Error fetching races:", error);

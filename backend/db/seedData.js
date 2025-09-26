@@ -1,7 +1,7 @@
 // db/seedData.js
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
-const mysql = require("mysql2/promise");
+const { Pool } = require("pg"); // Use pg
 
 const racesData = [
   {
@@ -74,50 +74,38 @@ const racesData = [
 async function seedRaces() {
   let pool;
   try {
-    pool = mysql.createPool({
-      host: process.env.MYSQL_HOST,
-      port: process.env.MYSQL_PORT,
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
     });
-
-    console.log("Seeding races...");
+    const client = await pool.connect();
+    console.log("Seeding races for PostgreSQL...");
 
     for (const race of racesData) {
-      const {
-        race_name,
-        kingdom,
-        description,
-        bonus,
-        starting_units,
-        divine_patron,
-      } = race;
-
-      // The ON DUPLICATE KEY UPDATE part prevents creating duplicate entries if you run the script again
+      // PostgreSQL uses ON CONFLICT...DO UPDATE for "upsert" functionality
       const query = `
         INSERT INTO races (race_name, kingdom, description, bonus, starting_units, divine_patron)
-        VALUES (?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE
-          kingdom = VALUES(kingdom),
-          description = VALUES(description),
-          bonus = VALUES(bonus),
-          starting_units = VALUES(starting_units),
-          divine_patron = VALUES(divine_patron);
+        VALUES ($1, $2, $3, $4, $5, $6)
+        ON CONFLICT (race_name) DO UPDATE SET
+          kingdom = EXCLUDED.kingdom,
+          description = EXCLUDED.description,
+          bonus = EXCLUDED.bonus,
+          starting_units = EXCLUDED.starting_units,
+          divine_patron = EXCLUDED.divine_patron;
       `;
 
-      await pool.query(query, [
-        race_name,
-        kingdom,
-        description,
-        JSON.stringify(bonus),
-        JSON.stringify(starting_units),
-        divine_patron,
+      await client.query(query, [
+        race.race_name,
+        race.kingdom,
+        race.description,
+        JSON.stringify(race.bonus),
+        JSON.stringify(race.starting_units),
+        race.divine_patron,
       ]);
-      console.log(`- ${race_name} seeded.`);
+      console.log(`- ${race.race_name} seeded.`);
     }
 
     console.log("Race data seeding complete.");
+    client.release();
   } catch (error) {
     console.error("Error seeding race data:", error);
   } finally {
