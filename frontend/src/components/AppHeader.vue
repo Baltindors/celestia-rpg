@@ -25,7 +25,10 @@
         </div>
         <div v-else class="guest-actions">
           <router-link to="/login" class="header-button">Login</router-link>
-          <router-link to="/login" class="header-button secondary"
+          <!-- MODIFIED: This link now tells the page to show the register form -->
+          <router-link
+            to="/login?action=register"
+            class="header-button secondary"
             >Sign Up</router-link
           >
         </div>
@@ -138,5 +141,23 @@ const handleLogout = async () => {
 }
 .header-button.secondary:hover {
   background-color: rgba(0, 246, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+  .main-nav {
+    display: none;
+  }
+
+  .header-content {
+    padding: 0 0.5rem;
+  }
+
+  .logo-link .logo-image {
+    height: 35px;
+  }
+
+  .auth-actions span {
+    display: none;
+  }
 }
 </style>

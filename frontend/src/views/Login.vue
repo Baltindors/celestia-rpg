@@ -55,14 +55,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../store/auth";
 import { playSound } from "../utils/audio";
 import AppHeader from "../components/AppHeader.vue";
 import AppFooter from "../components/AppFooter.vue";
 
 const router = useRouter();
+const route = useRoute(); // <-- ADDED: To access URL details
 const authStore = useAuthStore();
 
 const isRegistering = ref(false);
@@ -74,6 +75,30 @@ const form = ref({
 
 const serverMessage = ref("");
 const isError = ref(false);
+
+// --- NEW LOGIC TO READ URL ---
+// This function sets the form state based on the URL query
+const setFormStateFromQuery = (query) => {
+  if (query.action === "register") {
+    isRegistering.value = true;
+  } else {
+    isRegistering.value = false;
+  }
+};
+
+// Set the initial state when the component is first loaded
+onMounted(() => {
+  setFormStateFromQuery(route.query);
+});
+
+// Watch for changes to the route query in case the user navigates between them
+watch(
+  () => route.query,
+  (newQuery) => {
+    setFormStateFromQuery(newQuery);
+  }
+);
+// --- END OF NEW LOGIC ---
 
 const toggleForm = () => {
   playSound("futuristic-click.mp3");
@@ -106,14 +131,14 @@ const handleSubmit = async () => {
 const loginWithGoogle = () => {
   playSound("futuristic-click.mp3");
   setTimeout(() => {
-    window.location.href = `${process.env.VUE_API_URL}"/auth/google`;
+    window.location.href = `${process.env.VUE_APP_API_URL}/auth/google`;
   }, 150);
 };
 
 const loginWithFacebook = () => {
   playSound("futuristic-click.mp3");
   setTimeout(() => {
-    window.location.href = `${process.env.VUE_API_URL}/auth/facebook`;
+    window.location.href = `${process.env.VUE_APP_API_URL}/auth/facebook`;
   }, 150);
 };
 </script>

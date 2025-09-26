@@ -25,16 +25,17 @@
           </p>
 
           <div class="hero-cta" v-if="!user">
-            <router-link to="/login" class="cta-image-link">
+            <!-- Swapped order for mobile-first stacking -->
+            <router-link to="/login" class="cta-image-link begin-ascension">
               <img
                 src="@/assets/images/home/Begin_Your_Ascension_btn.png"
-                alt="Return to the Realm"
+                alt="Begin Your Ascension"
               />
             </router-link>
-            <router-link to="/login" class="cta-image-link">
+            <router-link to="/login" class="cta-image-link return-realm">
               <img
                 src="@/assets/images/home/Return_to_the_Realm_btn.png"
-                alt="Begin Your Ascension"
+                alt="Return to the Realm"
               />
             </router-link>
           </div>
@@ -145,7 +146,6 @@
 import { computed } from "vue";
 import { useAuthStore } from "../store/auth";
 import AppHeader from "../components/AppHeader.vue";
-// ---- THIS LINE IS NOW CORRECTED ----
 import AppFooter from "../components/AppFooter.vue";
 
 const authStore = useAuthStore();
@@ -153,37 +153,7 @@ const user = computed(() => authStore.user);
 </script>
 
 <style scoped>
-.home-page {
-  width: 100%;
-}
-
-main {
-  padding-top: 70px;
-  /* REMOVED background-color from main element */
-}
-
-.hero-cta {
-  display: flex;
-  flex-direction: row; /* Aligns the images horizontally */
-  justify-content: center; /* Centers the images horizontally in the container */
-  align-items: center; /* Aligns the images vertically */
-  gap: 3.5rem; /* Adds space between the images */
-  margin-top: 1rem;
-}
-
-.cta-image-link img {
-  width: 100%;
-  max-width: 200px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 100px;
-}
-
-.cta-image-link:hover img {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(0, 246, 255, 0.7);
-}
-
-/* Hero Section */
+/* --- HERO SECTION --- */
 .hero-section {
   position: relative;
   height: 90vh;
@@ -233,8 +203,8 @@ main {
 .hero-logo {
   max-width: 600px;
   margin-bottom: 1rem;
-  border-radius: 15px; /* Rounded corners for the logo */
-  box-shadow: 0 0 25px rgba(0, 246, 255, 0.5); /* Glowing effect */
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(0, 246, 255, 0.5);
 }
 
 .hero-content h1 {
@@ -249,50 +219,46 @@ main {
   color: #c0c0c0;
 }
 
-.cta-button {
-  font-family: "Orbitron", sans-serif;
-  background: transparent;
-  color: #00f6ff;
-  border: 2px solid #00f6ff;
-  border-radius: 5px;
-  padding: 12px 24px;
-  cursor: pointer;
-  font-size: 16px;
-  text-decoration: none;
-  box-shadow: inset 0 0 10px rgba(0, 246, 255, 0.5),
-    0 0 15px rgba(0, 246, 255, 0.3);
-  transition: all 0.3s ease-in-out;
-}
-.cta-button:hover {
-  background-color: rgba(0, 246, 255, 0.2);
-  color: #ffffff;
-  box-shadow: inset 0 0 15px rgba(0, 246, 255, 0.8),
-    0 0 25px rgba(0, 246, 255, 0.7);
-}
-.cta-button.secondary {
-  background-color: rgba(0, 246, 255, 0.1);
-}
-.cta-button:disabled {
-  border-color: #555;
-  color: #555;
-  cursor: not-allowed;
-  box-shadow: none;
-  background: transparent;
+.hero-cta {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 3.5rem;
+  margin-top: 2rem; /* Increased margin for better spacing */
 }
 
-/* General Content Section Styling */
+.cta-image-link img {
+  width: 100%;
+  max-width: 200px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 50%; /* Make the border circular */
+}
+
+.cta-image-link:hover img {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 246, 255, 0.7);
+}
+
+/* --- GENERAL CONTENT SECTIONS --- */
+.home-page {
+  width: 100%;
+}
+
+main {
+  padding-top: 70px;
+}
+
 .content-section {
   padding: 4rem 2rem;
   position: relative;
   overflow: hidden;
 }
 
-/* NEW: Class for solid background sections */
 .solid-bg {
   background-color: #0a0a14;
 }
 
-/* Reusable class for sections with the background image */
 .background-section::before {
   content: "";
   position: absolute;
@@ -303,11 +269,10 @@ main {
   background-image: url("@/assets/images/background_celestia.png");
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* Parallax effect */
+  background-attachment: fixed;
   z-index: -2;
 }
 
-/* Dark overlay for the background sections to ensure text is readable */
 .background-section::after {
   content: "";
   position: absolute;
@@ -315,7 +280,7 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(10, 10, 20, 0.9); /* Dark semi-transparent layer */
+  background-color: rgba(10, 10, 20, 0.9);
   z-index: -1;
 }
 
@@ -363,7 +328,7 @@ main {
   background-image: url("@/assets/images/home/about-celestia.jpg");
 }
 
-/* Explore Section */
+/* --- EXPLORE SECTION --- */
 .explore-container h2 {
   text-align: center;
 }
@@ -401,8 +366,14 @@ main {
   background-image: url("@/assets/images/home/book-cover.jpg");
 }
 
+/* --- YOUTUBE THUMBNAIL FIX --- */
 #youtube-image {
   background-image: url("@/assets/images/home/youtube-thumbnail.jpg");
+  /* Changed from 'contain' to 'cover'. This will fill the space and crop the sides,
+     which looks much cleaner than having black bars. The best long-term fix
+     would be a separate, portrait-oriented image for mobile. */
+  background-size: cover;
+  background-position: center;
 }
 
 .explore-card-content {
@@ -417,7 +388,7 @@ main {
   color: #c0c0c0;
 }
 
-/* Community Section */
+/* --- COMMUNITY SECTION --- */
 .community-container {
   display: flex;
   flex-direction: column;
@@ -432,17 +403,72 @@ main {
   justify-content: center;
 }
 
-/* Responsive adjustments */
+.cta-button {
+  font-family: "Orbitron", sans-serif;
+  background: transparent;
+  color: #00f6ff;
+  border: 2px solid #00f6ff;
+  border-radius: 5px;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: none;
+  box-shadow: inset 0 0 10px rgba(0, 246, 255, 0.5),
+    0 0 15px rgba(0, 246, 255, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+.cta-button:hover {
+  background-color: rgba(0, 246, 255, 0.2);
+  color: #ffffff;
+  box-shadow: inset 0 0 15px rgba(0, 246, 255, 0.8),
+    0 0 25px rgba(0, 246, 255, 0.7);
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
+  main {
+    padding-top: 60px;
+  }
+
+  /* FIX: Adjust hero section for better mobile spacing */
+  .hero-section {
+    height: auto; /* Let the section size to its content */
+    min-height: 90vh; /* Ensure it still feels fullscreen */
+    padding: 6rem 0 4rem 0; /* Add generous vertical padding */
+    box-sizing: border-box; /* Ensure padding is included in height calculation */
+  }
+
+  .hero-content {
+    padding: 0 0.2rem; /* Add some padding to hero content */
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  .hero-logo {
+    max-width: 90%;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .begin-ascension {
+    order: 1;
+  }
+  .return-realm {
+    order: 2;
+  }
+
   .section-container,
   .explore-grid {
     grid-template-columns: 1fr;
-  }
-  .hero-content h1 {
-    font-size: 2.5rem;
-  }
-  main {
-    padding-top: 60px;
   }
 }
 </style>
