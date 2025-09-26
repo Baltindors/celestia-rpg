@@ -129,11 +129,22 @@ const confirmSelection = async () => {
 }
 
 .race-selection-container {
+  max-width: 1200px;
+  margin: 120px auto 2rem auto; /* Margin to clear the fixed header */
+  padding: 2.5rem;
+  background-color: rgba(10, 10, 20, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 246, 255, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 0 25px rgba(0, 246, 255, 0.3);
+
+  /* Existing styles below */
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  padding-bottom: 2rem; /* Ensure some padding at the bottom for scrolling */
+  padding-bottom: 2rem;
 }
 .intro-text {
   max-width: 600px;
