@@ -9,7 +9,12 @@
           >Bluesky</a
         >
         <button disabled>Discord</button>
-        <button disabled>Donate</button>
+        <a
+          href="https://ko-fi.com/celestiarpg"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Donate</a
+        >
       </div>
       <div class="copyright">
         &copy; {{ new Date().getFullYear() }} Celestia RPG. All rights reserved.

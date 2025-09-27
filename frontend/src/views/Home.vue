@@ -131,7 +131,13 @@
               >Bluesky</a
             >
             <button class="cta-button" disabled>Discord (Coming Soon)</button>
-            <button class="cta-button" disabled>Donate (Support Us)</button>
+            <a
+              href="https://ko-fi.com/celestiarpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="cta-button"
+              >Donate (Support Us)</a
+            >
           </div>
         </div>
       </section>
